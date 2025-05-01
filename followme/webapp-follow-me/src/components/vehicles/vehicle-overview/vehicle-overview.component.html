@@ -1,0 +1,79 @@
+<p-splitter styleClass="m-5" [panelSizes]="[40, 60]">
+  <ng-template pTemplate>
+    <div class="col align-items-center justify-content-center">
+      <app-map></app-map>
+    </div>
+  </ng-template>
+  <ng-template pTemplate>
+    <div class="col align-items-center justify-content-center">
+      <p-card header="Dashboard">
+        <div class="card flex flex-column justify-content-center">
+          <p-accordion [multiple]="true" [activeIndex]="[0, 1]">
+            <p-accordionTab header="Vehicles">
+              <p-table [value]="vehicles" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Vin</th>
+                    <th>Role</th>
+                    <th>Lane</th>
+                    <th>Speed (km/h)</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-vehicle>
+                  <tr [class]="getColorForRole(vehicle)">
+                    <td>{{ vehicle.vin }}</td>
+                    <td>{{ getLabelByRole(vehicle.role) }}</td>
+                    <td>{{ vehicle.lane }}</td>
+                    <td>{{ vehicle.speed | number:'1.0-0'}}</td>
+                    <td>{{ formatTime(vehicle.timestamp) }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-accordionTab>
+            <p-accordionTab header="Matches">
+              <p-table [value]="matches" [tableStyle]="{ 'min-width': '50rem' }">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Leader Vin</th>
+                    <th>Follower Vin</th>
+                    <th>Required Lane (1-3)</th>
+                    <th>Required Speed (km/h)</th>
+                    <th>Matched Since</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-match>
+                  <tr>
+                    <td>{{ match.leaderVin }}</td>
+                    <td>{{ match.followerVin }}</td>
+                    <td>{{ match.requiredLane }}</td>
+                    <td>{{ match.requiredSpeed | number:'1.0-0'}}</td>
+                    <td>{{ formatTime(match.startTime) }}</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </p-accordionTab>
+          </p-accordion>
+        </div>
+      </p-card>
+      <div class="mt-5">
+        <p-card header="Event logs">
+          <p-table [value]="this.eventLogs" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Log message</th>
+                <th>Time stamp</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-event>
+              <tr>
+                <td>{{ event.event }}</td>
+                <td>{{ event.timestamp }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+      </div>
+    </div>
+  </ng-template>
+</p-splitter>

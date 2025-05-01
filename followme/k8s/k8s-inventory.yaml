@@ -1,0 +1,60 @@
+# Inventory
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dse2024-inventory
+  namespace: dse2024
+spec:
+  selector:
+    matchLabels:
+      app: dse2024-inventory
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dse2024-inventory
+    spec:
+      containers:
+        - name: dse2024-inventory
+          image: europe-west9-docker.pkg.dev/dse2024-425312/dse-repo/k8s-inventory
+          ports:
+            - containerPort: 8001
+          livenessProbe:
+            httpGet:
+              port: 8001
+              path: /inventory
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 8001
+              path: /inventory
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              port: 8001
+              path: /inventory
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 120
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dse2024-inventory-service
+  namespace: dse2024
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: dse2024-inventory
+  ports:
+    - port: 8001
+      protocol: TCP
+      targetPort: 8001

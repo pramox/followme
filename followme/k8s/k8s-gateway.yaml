@@ -1,0 +1,91 @@
+# gateway
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dse2024-gateway
+  namespace: dse2024
+spec:
+  selector:
+    matchLabels:
+      app: dse2024-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dse2024-gateway
+    spec:
+      containers:
+        - name: dse2024-gateway
+          image: europe-west9-docker.pkg.dev/dse2024-425312/dse-repo/k8s-gateway
+          env:
+            - name: INVENTORY_URL
+              value: "http://dse2024-inventory-service:8001/inventory"
+            - name: BEACHCOMB_URL
+              value: "http://dse2024-beachcomb-service:8002/beachcomb"
+            - name: CONTROL_URL
+              value: "http://dse2024-control-service:8003/vehicle"
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              port: 8000
+              path: /healthcheck
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 8000
+              path: /healthcheck
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              port: 8000
+              path: /healthcheck
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 120
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dse2024-gateway-service
+  namespace: dse2024
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: dse2024-gateway
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dse2024-gateway-ingress
+  namespace: dse2024
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-methods: PUT, GET, POST, OPTIONS, DELETE
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:4200, http://127.0.0.1:8000, http://34.149.41.50, http://34.149.86.27"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dse2024-gateway-service # Matches your Service name
+                port:
+                  number: 8000

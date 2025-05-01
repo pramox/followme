@@ -1,0 +1,63 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dse2024-beachcomb
+  namespace: dse2024
+spec:
+  selector:
+    matchLabels:
+      app: dse2024-beachcomb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dse2024-beachcomb
+    spec:
+      containers:
+        - name: dse2024-beachcomb
+          image: europe-west9-docker.pkg.dev/dse2024-425312/dse-repo/k8s-beachcomb
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/app/pubsub-key.json"
+          ports:
+            - containerPort: 8002
+          livenessProbe:
+            httpGet:
+              port: 8002
+              path: /beachcomb
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              port: 8002
+              path: /beachcomb
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              port: 8002
+              path: /beachcomb
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 120
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dse2024-beachcomb-service
+  namespace: dse2024
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: dse2024-beachcomb
+  ports:
+    - port: 8002
+      protocol: TCP
+      targetPort: 8002

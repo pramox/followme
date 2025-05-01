@@ -1,0 +1,31 @@
+properties:
+  matching:
+    following-vehicle-time-discrepancy-ms: 5000
+
+
+
+spring:
+  application:
+    name: Control Service
+  data:
+    mongodb:
+      uri: mongodb+srv://e12007552:2bXPgfoEjWReqZvX@ClusterDSE2024.lo0qujn.mongodb.net/?retryWrites=true&w=majority&appName=ClusterDSE2024
+      database: control
+  cloud:
+    gcp:
+      project-id: dse2024-425312
+      credentials: #credential.location can be removed in deployment as Google cloud will get this from the environment itself
+        location: classpath:pubsub-key.json
+      pubsub:
+        health:
+          executor-threads: 1
+pubsub:
+  topic: followme_matching
+  subscription: followme_matching-sub
+
+logging:
+  level:
+    root: info
+
+server:
+  port: 8003

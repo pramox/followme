@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Inventory Service
+  data:
+    mongodb:
+      uri: mongodb+srv://e12007552:2bXPgfoEjWReqZvX@ClusterDSE2024.lo0qujn.mongodb.net/?retryWrites=true&w=majority&appName=ClusterDSE2024
+      database: inventory
+
+logging:
+  level:
+    root: info
+
+server:
+  port: 8001

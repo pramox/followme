@@ -1,0 +1,61 @@
+# webapp
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dse2024-webapp
+  namespace: dse2024
+spec:
+  selector:
+    matchLabels:
+      app: dse2024-webapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dse2024-webapp
+    spec:
+      containers:
+        - name: dse2024-webapp
+          image: europe-west9-docker.pkg.dev/dse2024-425312/dse-repo/k8s-webapp:latest
+          ports:
+            - containerPort: 4200
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dse2024-webapp-service
+  namespace: dse2024
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: dse2024-webapp
+  ports:
+    - port: 4200
+      protocol: TCP
+      targetPort: 4200
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dse2024-ingress
+  namespace: dse2024
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dse2024-webapp-service
+                port:
+                  number: 4200

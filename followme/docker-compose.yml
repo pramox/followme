@@ -1,0 +1,51 @@
+version: "3"
+services:
+  gateway:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/apigateway
+    environment:
+      - INVENTORY_URL=http://inventory:8001/inventory
+      - BEACHCOMB_URL=http://beachcomb:8002/beachcomb
+      - CONTROL_URL=http://control:8003/vehicle
+    networks:
+      - dse
+    ports:
+      - "8000:8000"
+  webapp:
+    build:
+      dockerfile: Dockerfile-dev
+      context: ./webapp-follow-me
+    networks:
+      - dse
+    ports:
+      - "4200:4200"
+  inventory:
+    build:
+      context: ./backend/services/inventory
+    networks:
+      - dse
+    ports:
+      - "8001:8001"
+  beachcomb:
+    build:
+      context: ./backend/services/beachcomb
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/pubsub-key.json
+    networks:
+      - dse
+    ports:
+      - "8002:8002"
+  control:
+    build:
+      context: ./backend/services/control
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/pubsub-key.json
+    networks:
+      - dse
+    ports:
+      - "8003:8003"
+
+networks:
+  dse:
+    name: dse

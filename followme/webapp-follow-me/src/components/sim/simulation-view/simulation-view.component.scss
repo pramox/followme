@@ -1,0 +1,19 @@
+.street {
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  width: 100vw; /* Set street width to fill the whole browser width */
+}
+
+.separator {
+  width: 100%;
+  height: 10px; /* Adjust height as needed */
+  background-color: #fff; /* White separator */
+}
+
+.lane {
+  flex: 1;
+  position: relative;
+  background-color: #555; /* Adjust color as needed */
+  width: 100%;
+}

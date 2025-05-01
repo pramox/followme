@@ -1,0 +1,16 @@
+<div class="card flex justify-content-center m-3">
+  <p-panel header="Simulation Properties" [toggleable]="true">
+    <div class="panel-container">
+      <p-panel header="Simulation speed">
+        {{simulationSpeed / 25 + 1}}x <p-slider [(ngModel)]="simulationSpeed" (onChange)="onSimulationSpeedChange($event)" [step]="25"/>
+      </p-panel>
+      <p-panel header="Control">
+        <div class="button-container">
+          <p-button (onClick)="startSimulation()" *ngIf="!isRunning" label="Start" severity="success" [rounded]="true"/>
+          <p-button (onClick)="stopSimulation()" *ngIf="isRunning" label="Stop" severity="danger" [rounded]="true"/>
+          <p-button (onClick)="startSimulation()" label="Reset" severity="info" [rounded]="true" />
+        </div>
+      </p-panel>
+    </div>
+  </p-panel>
+</div>

@@ -1,0 +1,12 @@
+### STAGE 1: Build ###
+FROM node:21-alpine AS build
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run builddev
+
+### STAGE 2: Run ###
+FROM nginx:1.25.3-alpine
+COPY nginx-dev.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/webapp-follow-me/browser /usr/share/nginx/html

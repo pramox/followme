@@ -1,0 +1,33 @@
+
+  <p-card header="On the map">
+    <div class="card flex justify-content-end align-self-center">
+      <div class="flex align-self-center mr-3">
+        Auto-focus the map on tracked vehicles
+      </div>
+      <p-toggleButton
+        [(ngModel)]="autoFocusOnMarker"
+        onLabel="On"
+        offLabel="Off"
+        onIcon="pi pi-lock"
+        offIcon="pi pi-lock-open"
+        styleClass="no-wrap-text w-9rem"
+        ariaLabel="Do you confirm" />
+    </div>
+    <br>
+    <div class="card flex justify-content-end align-self-center">
+      <div class="flex align-self-center mr-3">
+        Show real-time updates
+      </div>
+      <p-toggleButton
+        [(ngModel)]="isLiveView"
+        onLabel="On"
+        offLabel="Paused"
+        onIcon="pi pi-check"
+        offIcon="pi pi-times"
+        styleClass="no-wrap-text w-9rem"
+        ariaLabel="Do you confirm" [style]=""/>
+    </div>
+
+    <p-divider />
+    <div id="map" style="height: 80vh; width: 100%;"></div>
+  </p-card>
